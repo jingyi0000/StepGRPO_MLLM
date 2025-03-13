@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="StepGRPO: Learning to Reason with Multimodal Large Language Models via Step-wise Group Relative Policy Optimization">
+  <meta name="keywords" content="MLLM, Reasoning, GRPO, Reinforcement Learning, VLM">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>StepGRPO: Learning to Reason with Multimodal Large Language Models via Step-wise Group Relative Policy Optimization</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title" style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; text-align: center;">
+            <span style="width: 100%; text-align: center;">
+              StepGRPO: Learning to Reason with Multimodal Large Language Models via Step-wise Group Relative Policy Optimization
+            </span>
+        </h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://jingyi0000.github.io/">Jingyi Zhang</a>,</span>
+            <span class="author-block">
+              <a href="https://jxhuang0508.github.io/">Jiaxing Huang</a>,</span>
+            <span class="author-block">
+              <a href="https://openreview.net/profile?id=~Huanjin_Yao1">Huanjin Yao</a>,</span>
+            <span class="author-block">
+              <a href="https://liushunyu.github.io/">Shunyu Liu</a>,</span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=oBlKsZ4AAAAJ&hl=en">Xikun Zhang</a>,</span>
+            <span class="author-block">
+              <a href="https://dr.ntu.edu.sg/cris/rp/rp01128">Shijian Lu</a>,</span>
+            <span class="author-block">
+              <a href="https://dr.ntu.edu.sg/cris/rp/rp02343">Dacheng Tao</a></sup>
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">College of Computing and Data Science, Nanyang Technological University</span><br>
+
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="#"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- Model Link. -->
+              <span class="link-block">
+                <a href="#"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-cube"></i>
+                  </span>
+                  <span>Model</span>
+                </a>
+              </span>
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="#"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              <!-- </span>
+              <span class="link-block">
+                <a href=""
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-database"></i>
+                  </span>
+                  <span>Data</span>
+                  </a> -->
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+
+            <p class="has-text-justified">
+              Recent studies generally enhance MLLMs' reasoning capabilities via supervised fine-tuning on high-quality chain-of-thought reasoning data, which often leads models to merely imitate successful reasoning paths without understanding what the wrong reasoning paths are. In this work, we aim to enhance the MLLMs’ reasoning ability beyond passively imitating positive reasoning paths. To this end, we design Step-wise Group Relative Policy Optimization (StepGRPO), a new online reinforcement learning framework that enables MLLMs to self-improve reasoning ability via simple, effective and dense step-wise rewarding. Specifically, StepGRPO introduces two novel rule-based reasoning rewards: Step-wise Reasoning Accuracy Reward (StepRAR) and Step-wise Reasoning Validity Reward (StepRVR). StepRAR rewards the reasoning paths that contain necessary intermediate reasoning steps via a soft key-step matching technique, while StepRAR rewards reasoning paths that follow a well-structured and logically consistent reasoning process through a reasoning completeness and logic evaluation strategy. With the proposed step-wise reward mechanisms, StepGRPO effectively mitigates the sparse reward issue for MLLMs and encourages more structured and logically consistent reasoning process. Extensive experiments over 8 benchmarks demonstrate the superiority of the proposed StepGRPO.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+
+    <!-- Main Figure. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full">
+        <div class="content has-text-centered">
+          <img src="./static/images/fig2.png" alt="Overview of StepGRPO" style="width: 100%; max-width: 1200px;">
+          <p class="has-text-justified">
+            <b>Overview of the proposed StepGRPO:</b>
+            StepGRPO consists of two phases: a policy warm-up phase and a step-wise online policy optimization phase. After the warm-up, the policy model generates a group of reasoning paths and assigns step-wise rewards using two proposed mechanisms: Step-wise Reasoning Accuracy Reward (StepRAR) and Step-wise Reasoning Validity Reward (StepRVR).
+            StepRAR rewards reasoning paths that contain key intermediate steps, identified using a soft key-step matching technique. 
+            StepRVR rewards reasoning paths based on completeness and logical consistency, ensuring they are well-structured. 
+            StepGRPO then estimates the advantage for policy optimization by using the average step-wise reasoning reward of a group of sampled reasoning paths as a baseline. Examples for StepRAR and StepRVR are illustrated in (a) and (b), respectively.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Main Figure. -->
+  </div>
+</section>
+
+
+<!-- Results Section -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full">
+        <h2 class="title is-3" style="margin-bottom: 2.5rem;">Main Results</h2>
+
+        
+        <div class="content">
+          <div class="table-container" style="overflow-x: auto;">
+            <table class="table is-bordered is-narrow is-hoverable is-fullwidth custom-table">
+              <thead>
+                <tr>
+                  <th class="has-text-centered">Method</th>
+                  <th class="has-text-centered">MathVista</th>
+                  <th class="has-text-centered">MMStar</th>
+                  <th class="has-text-centered">Math-V</th>
+                  <th class="has-text-centered">ChartQA</th>
+                  <th class="has-text-centered">DynaMath</th>
+                  <th class="has-text-centered">HallBench</th>
+                  <th class="has-text-centered">MathVerse</th>
+                  <th class="has-text-centered">MME</th>
+                  <th class="has-text-centered">Average</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="10" style="background-color: #f5f5f5;"><b>Closed-Source Model</b></td>
+                </tr>
+                <tr>
+                  <td>GPT-4o</td> 
+                  <td class="has-text-centered">63.8</td>
+                  <td class="has-text-centered">63.9</td>
+                  <td class="has-text-centered">30.3</td>
+                  <td class="has-text-centered">85.7</td>
+                  <td class="has-text-centered">63.7</td>
+                  <td class="has-text-centered">55.0</td>
+                  <td class="has-text-centered">39.4</td>
+                  <td class="has-text-centered">2329</td>
+                  <td class="has-text-centered">64.5</td>
+                </tr>
+                <tr>
+                  <td>Claude-3.5 Sonnet</td> 
+                  <td class="has-text-centered">67.7</td>
+                  <td class="has-text-centered">62.2</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">90.8</td>
+                  <td class="has-text-centered">64.8</td>
+                  <td class="has-text-centered">55.0</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">1920</td>
+                  <td class="has-text-centered">-</td>
+                </tr>
+                <tr>
+                  <td colspan="10" style="background-color: #f5f5f5;"><b>Open-Source Model</b></td>
+                </tr>
+                <tr>
+                  <td>Cambrain-1-8B</td> 
+                  <td class="has-text-centered">49.0</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">73.3</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                </tr>
+                <tr>
+                  <td>MM-1.5-7B</td> 
+                  <td class="has-text-centered">47.6</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">78.6</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">1861</td>
+                  <td class="has-text-centered">-</td>
+                </tr>
+                <tr>
+                  <td>Idefics3-LLaMA3-8B</td> 
+                  <td class="has-text-centered">58.4</td>
+                  <td class="has-text-centered">55.9</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">74.8</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">1937</td>
+                  <td class="has-text-centered">-</td>
+                </tr>
+                <tr>
+                  <td>InternVL2-8B</td> 
+                  <td class="has-text-centered">58.3</td>
+                  <td class="has-text-centered">61.5</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">83.3</td>
+                  <td class="has-text-centered">39.7</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">2210</td>
+                  <td class="has-text-centered">-</td>
+                </tr>
+                <tr>
+                  <td>MiniCPM-V-2.6-8B</td> 
+                  <td class="has-text-centered">60.6</td>
+                  <td class="has-text-centered">57.5</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">48.1</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">2348</td>
+                  <td class="has-text-centered">-</td>
+                </tr>
+                <tr>
+                  <td>DeepSeek-VL2-MOE-4.5B</td> 
+                  <td class="has-text-centered">62.8</td>
+                  <td class="has-text-centered">61.3</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">86.0</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">2253</td>
+                  <td class="has-text-centered">-</td>
+                </tr>
+                <tr>
+                  <td colspan="10" style="background-color: #f5f5f5;"><b>Reasoning Model</b></td>
+                </tr>
+                <tr>
+                  <td>LLaVA-CoT-11B</td> 
+                  <td class="has-text-centered">54.8</td>
+                  <td class="has-text-centered">57.6</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">47.8</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                </tr>
+                <tr>
+                  <td>LLaVA-Reasoner-8B</td> 
+                  <td class="has-text-centered">50.6</td>
+                  <td class="has-text-centered">54.0</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">83.0</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                </tr>
+                <tr>
+                  <td>Insight-V-8B</td> 
+                  <td class="has-text-centered">49.8</td>
+                  <td class="has-text-centered">57.4</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">77.4</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">2069</td>
+                  <td class="has-text-centered">-</td>
+                </tr>
+                <tr>
+                  <td>Mulberry-7B</td> 
+                  <td class="has-text-centered">63.1</td>
+                  <td class="has-text-centered">61.3</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">83.9</td>
+                  <td class="has-text-centered">45.1</td>
+                  <td class="has-text-centered">54.1</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">2396</td>
+                  <td class="has-text-centered">-</td>
+                </tr>
+                <tr>
+                  <td>LlamaV-o1-11B</td> 
+                  <td class="has-text-centered">54.4</td>
+                  <td class="has-text-centered">59.4</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">63.5</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                  <td class="has-text-centered">-</td>
+                </tr>
+                <tr>
+                  <td colspan="10" style="background-color: #f5f5f5;"><b>  </b></td>
+                </tr>
+                <tr>
+                  <td>Qwen2-VL-2B</td> 
+                  <td class="has-text-centered">43.0</td>
+                  <td class="has-text-centered">48.0</td>
+                  <td class="has-text-centered">12.4</td>
+                  <td class="has-text-centered">73.5</td>
+                  <td class="has-text-centered">24.9</td>
+                  <td class="has-text-centered">41.7</td>
+                  <td class="has-text-centered">19.7</td>
+                  <td class="has-text-centered">1872</td>
+                  <td class="has-text-centered">41.2</td>
+                </tr>
+                <tr>
+                  <td>Qwen2-VL-2B-GRPO</td> 
+                  <td class="has-text-centered">41.4</td>
+                  <td class="has-text-centered">46.2</td>
+                  <td class="has-text-centered">16.0</td>
+                  <td class="has-text-centered">72.5</td>
+                  <td class="has-text-centered">24.2</td>
+                  <td class="has-text-centered">42.2</td>
+                  <td class="has-text-centered">19.9</td>
+                  <td class="has-text-centered">1930</td>
+                  <td class="has-text-centered">41.4</td>
+                </tr>
+                <tr> 
+                  <td><b>Qwen2-VL-2B-StepGRPO</b></td> 
+                  <td class="has-text-centered">52.1</td>
+                  <td class="has-text-centered">49.8</td>
+                  <td class="has-text-centered">17.1</td>
+                  <td class="has-text-centered">75.2</td>
+                  <td class="has-text-centered">29.4</td>
+                  <td class="has-text-centered">44.0</td>
+                  <td class="has-text-centered">26.2</td>
+                  <td class="has-text-centered">2048</td>
+                  <td class="has-text-centered">45.8</td>
+                </tr>
+                <tr>
+                  <td colspan="10" style="background-color: #f5f5f5;"><b>  </b></td>
+                </tr>
+                <tr>
+                  <td>Qwen2-VL-7B</td>
+                  <td class="has-text-centered">58.2</td>
+                  <td class="has-text-centered">60.7</td>
+                  <td class="has-text-centered">16.3</td>
+                  <td class="has-text-centered">83.0</td>
+                  <td class="has-text-centered">42.1</td>
+                  <td class="has-text-centered">50.6</td>
+                  <td class="has-text-centered">32.5</td>
+                  <td class="has-text-centered">2327</td>
+                  <td class="has-text-centered">53.3</td>
+                </tr>
+                <tr>
+                  <td>Qwen2-VL-7B-GRPO</td>
+                  <td class="has-text-centered">55.1</td>
+                  <td class="has-text-centered">59.8</td>
+                  <td class="has-text-centered">19.1</td>
+                  <td class="has-text-centered">81.3</td>
+                  <td class="has-text-centered">33.9</td>
+                  <td class="has-text-centered">48.5</td>
+                  <td class="has-text-centered">30.9</td>
+                  <td class="has-text-centered">2335</td>
+                  <td class="has-text-centered">51.4</td>
+                </tr>
+                <tr>
+                  <td><b>Qwen2-VL-7B-StepGRPO</b></td>
+                  <td class="has-text-centered">63.5</td>
+                  <td class="has-text-centered">60.0</td>
+                  <td class="has-text-centered">24.7</td>
+                  <td class="has-text-centered">83.9</td>
+                  <td class="has-text-centered">45.2</td>
+                  <td class="has-text-centered">54.7</td>
+                  <td class="has-text-centered">40.0</td>
+                  <td class="has-text-centered">2376</td>
+                  <td class="has-text-centered">57.1</td>
+                </tr>
+                
+              </tbody>
+            </table>
+    </div>
+        <p class="has-text-centered">
+          <i>Table 1: Main experimental results.</i>
+      </p>
+    </div>
+
+
+
+      <!-- Update JavaScript for new tabs -->
+      <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          // Get all tab items
+          const tabs = document.querySelectorAll('.tabs li');
+          
+          // Add click event to each tab
+          tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+              // Get the parent tabs container
+              const tabsContainer = tab.closest('.tabs');
+              // Remove active class from all tabs in this container
+              tabsContainer.querySelectorAll('li').forEach(t => t.classList.remove('is-active'));
+              // Add active class to clicked tab
+              tab.classList.add('is-active');
+              
+              // Get the target table ID
+              const targetId = tab.getAttribute('data-target');
+              // Get all tables in the same content container
+              const contentContainer = tabsContainer.nextElementSibling;
+              // Hide all tables in this container
+              contentContainer.querySelectorAll('.table-container').forEach(table => {
+                table.style.display = 'none';
+              });
+              
+              // Show selected table
+              document.getElementById(targetId).style.display = 'block';
+            });
+          });
+        });
+      </script>
+
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- Case Study Section -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full">
+        <h2 class="title is-3" style="margin-bottom: 2.5rem;">Qualitative Comparison</h2>
+        
+        <!-- Showcase 1 -->
+        <div class="content has-text-centered" style="margin-bottom: 4rem;">
+          <img src="./static/images/fig4.png" alt="Case Study 1" style="width: 100%; max-width: 1200px;">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- <section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code> @misc{}
+</code></pre>
+  </div>
+</section> -->
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link"
+         href=#>
+        <i class="fas fa-file-pdf"></i>
+      </a>
+      <a class="icon-link" href=# class="external-link" disabled>
+        <i class="fab fa-github"></i>
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is adapted from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a> and licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
